@@ -1,0 +1,484 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>2018年度上网盘点</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/ani.css" />
+	</head>
+	<style type="text/css">
+		*{
+			margin: 0;
+			font-family: "microsoft yahei"
+		}
+		
+		html,body{
+			background-color: white;
+		}
+		
+		#vbody{
+			background-image: url(img/bg.jpg);
+			min-height: 100vh;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		#choice{
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			min-height: 100vh;
+		}
+		
+		.choice-item{
+			display: flex;
+			flex-direction: row;
+			width: 30vw;
+			height: 30vw;
+			margin: 5px 10vw;
+			background-color: rgba(0,0,0,0.7);
+			color: white;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			border-radius: 10px;
+		}
+		
+		.choice-item:active{
+			background-color: black;
+		}
+		
+		#display{
+			height: 100%;
+			/* background-color: saddlebrown; */
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		#display>p{
+			color: white;
+			width: 100%;
+			text-align: center;
+		}
+		
+		.big{
+			color: red;
+		}
+		
+		.title{
+			font-size: 1em;
+			border-bottom: solid white 1px;
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+		}
+		
+		.tip{
+			font-size: 0.7em;
+		}
+		
+		.my,.my>a{
+			width: 80vw;
+			height: 44px;
+			background-color: rgba(255,255,255,0.3);
+			color: black;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			font-size: 15px;
+			font-weight: 800;
+		}
+		
+		.qrcode{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.qrcode>p{
+			color: black;
+		}
+		
+		#qrcode{
+			width: 66px;
+			height: 66px;
+			background-color: rgba(255,255,255,0.8);
+			margin-bottom: 10px;
+			background-image: url(img/qr.png);
+			background-size: cover;
+		}
+	</style>
+	<body>
+		<audio src="music/bg.mp3" id="bgm" autoplay="autoplay">
+			当前浏览器不支持audio
+		</audio>
+		<div id="vbody">
+			<div id="choice" v-if="mode=='choose'">
+				<p style="color: white;">选择你的2018 Style</p>
+				<div class="choice-item" v-for="(v,k) in type" v-html="v.choiceName" @click="chooseStyle(k)"></div>
+				
+			</div>
+			<div id="display" v-if="mode=='display'">
+				<p class="title"> <span class="big">{{current.name}}</span>的2018年~</p>
+				<p>一共<span class="big">{{current.actionName}}{{current.count}}</span>次</p>
+				<p>你热衷于<span class="big">{{current.favoriteThing}}</span></p>
+				<p>一天的时间里，最喜欢在<span class="big">{{current.favoriteTime}}{{current.actionName}}</span></p>
+				<p>2018，你{{current.actionName}}用的最多的关键词是<span class="big">{{current.keyword}}</span></p>
+				<p><span class="big">{{current.specialDay}}</span>大概是很特别的一天</p>
+				<p>这一天里你{{current.actionName}}<span class="big">{{current.specialDay_count}}</span>次</p>
+				<p><span class="big">{{current.sleepLateDay}}</span>这一天你睡得很晚</p>
+				<p><span class="big">{{current.sleepLateDay_time}}</span>还在发微博</p>
+				<p>那一刻你正在<span class="big">{{current.sleepLateDay_doWhat}}</span></p>
+				<p>这一年，你有<span class="big">{{current.afterMidnightDayCount}}</span>天夜间12点后仍然是<span class="big">{{current.title}}</span></p>
+				<br><br>
+				<p>愿新的一年里，你能够坚持本心
+				<br>
+				在<span class="big">{{current.title}}</span>的路上渐行渐远</p>
+				<br><br><br>
+				<p class="my"><a href="index.html">生成我的年度上网盘点</a></p>
+				<p class="tip">可以截图发给好友，或者使用浏览器的分享功能发给好友</p>
+				<div class="qrcode">
+					<div id="qrcode"></div>
+				</div>
+				<p class="tip">你是第{{visitCount}}个访问</p>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/vue.js" ></script>
+		<script type="text/javascript" src="js/qrcode.js" ></script>
+		<script type="text/javascript" src="js/util.js" ></script>
+		<script type="text/javascript">
+			var v = new Vue({
+				el: '#vbody',
+				data: {
+					mode: 'choose',
+					visitCount: 0,
+					type: [
+						{
+							key: 'sd',
+							name: '沙雕',
+							choiceName: '沙雕网友',
+							actionName: '沙雕了',
+						},
+						
+						{
+							key: 'nmsl',
+							name: '喷子',
+							choiceName: 'NM$L',
+							actionName: '操别人妈',
+						},
+						
+						{
+							key: 'jq',
+							name: '矫情逼',
+							choiceName: "分享生活<br/>留住感动",
+							actionName: '矫情',
+						},
+						
+						{
+							key: 'cg',
+							name: '吃瓜群众',
+							choiceName: '吃瓜划水',
+							actionName: '吃瓜划水反复切换',
+						},
+						
+						{
+							key: 'tg',
+							name: '舔狗',
+							choiceName: '舔狗',
+							actionName: '舔了',
+						},
+						
+						{
+							key: 'kj',
+							name: '科技博主',
+							choiceName: '科技博主',
+							actionName: '玩机',
+						}
+					],
+					
+					current: {
+						name: '',
+						title: '',
+						actionName: '',
+						count: 0,
+						favoriteThing: '',
+						favoriteTime: '',
+						keyword: '',
+						specialDay: '',
+						specialDay_count: '',
+						sleepLateDay: '',
+						sleepLateDay_time: '',
+						sleepLateDay_doWhat: '',
+						afterMidnightDayCount: 0
+					},
+					
+				},
+				
+				methods: {
+					chooseStyle(type){
+						var that = this;
+						var c = {};
+						var name = prompt("告诉我你的名字吧，哪怕是网名也行~QWQ\n\n不告诉我的话我就随便给你起名字了哦…QWQ");
+						if(name != null && name != ''){
+							c.name = name;
+						}else{
+							c.name = getRandValue(randName);
+						}
+						
+						c.title = that.type[type].name;
+						c.actionName = that.type[type].actionName;
+						c.count = rand(100,1000);
+						c.favoriteThing = getRandValue(favoriteThing[that.type[type].key]);
+						c.favoriteTime = getRandValue(randMorningNoon);
+						c.keyword = getRandValue(keyword[that.type[type].key]);
+						c.specialDay = randDate();
+						c.specialDay_count = rand(1000,10000);
+						c.sleepLateDay = randDate();
+						c.sleepLateDay_time = randTime();
+						c.sleepLateDay_doWhat = getRandValue(favoriteThing[that.type[type].key]);
+						c.afterMidnightDayCount = rand(1,365);
+						
+						that.current = c;
+						
+						window.location.href = 'index.html?c='+encodeURI(JSON.stringify(c));
+					}
+				},
+				
+				mounted(){
+					var that = this;
+					var c = param('c');
+					if(c){
+						that.current = JSON.parse(decodeURIComponent(c));
+						that.mode = 'display';
+						document.getElementsByTagName("title")[0].innerText = that.current.name + '的2018年度上网盘点';
+					}else{
+						that.mode = 'choose';
+					}
+					
+					get('addLog',{},function(res){
+						that.visitCount = res.data[0].c;
+					})
+				}
+			});
+			
+			function param(par){
+			    //获取当前URL
+			    var local_url = document.location.href; 
+			    //获取要取得的get参数位置
+			    var get = local_url.indexOf(par +"=");
+			    if(get == -1){
+			        return false;   
+			    }   
+			    //截取字符串
+			    var get_par = local_url.slice(par.length + get + 1);    
+			    //判断截取后的字符串是否还有其他get参数
+			    var nextPar = get_par.indexOf("&");
+			    if(nextPar != -1){
+			        get_par = get_par.slice(0, nextPar);
+			    }
+			    return get_par;
+			}
+			
+			function getRandValue(arrOrObj){
+				return arrOrObj[rand(0,arrOrObj.length - 1)];
+			}
+			
+			function rand(minNum,maxNum){
+				return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
+			}
+			
+			function randDate(){
+				var timeStamp = rand(1514736000,1546271999);
+				var date = new Date(timeStamp*1000);
+				return date.getFullYear()+'年'+(date.getMonth() + 1) + '月' + date.getDate() + '日';
+			}
+			
+			function randTime(){
+				var timeStamp = rand(1546531200,1546545600);
+				var date = new Date(timeStamp*1000);
+				var hour = date.getHours();
+				if(hour < 10){
+					hour = '0' + hour.toString();
+				}
+				
+				var min = date.getMinutes();
+				if(min < 10){
+					min = '0' + min.toString();
+				}
+				
+				return hour+':'+min;
+			}
+			
+			//随机生成名称
+			var randName = [
+				'热心网友二狗子',
+				'心狠手辣的三柱子',
+				'霹雳闪电呲花楠',
+				'昆特牌提琴烤蛋挞苏打马拉松',
+				'达拉崩巴斑得贝迪卜多比鲁翁',
+				'死了妈的亚索'
+			];
+			
+			//喜欢事件
+			var favoriteThing = {
+				sd : [
+					'犯二逼',
+					'编写沙雕段子',
+					'在@银教授微博下为粉丝队得分',
+					'唱rap',
+					'学粤语',
+					'学猪叫学狗叫'
+				],
+				
+				nmsl: [
+					'骂人',
+					'为@带带大师兄打call',
+					'在评论区和网友争论蔡徐坤和谢广坤到底谁是庄周骑的鱼'
+				],
+				
+				jq: [
+					'写日记',
+					'发情感微博',
+					'为有对象的人做情感导师'
+				],
+				
+				cg: [
+					'关心赵丽颖怀了男孩女孩',
+					'关心微博倒闭了吗',
+					'关心陈羽凡吸了什么玩意',
+					'关心易烊千玺十八岁生日开心不开心',
+					'关心@来去之间今天装逼了吗',
+					'关心冯绍峰名字倒过来念到底是哪的方言',
+					'关心蔡少芬的普通话到底怎么样了'
+				],
+				
+				tg: [
+					'问女神睡了吗',
+					'问女神吃不吃饭',
+					'问女神和谁在一起',
+					'接盘'
+				],
+				
+				kj: [
+					'和网友撕iPhoneXS和小米8哪个香',
+					'和网友撕哪个显卡更像燃气灶',
+					'在闲鱼砍价'
+				]
+			};
+			
+			//随机时间段
+			var randMorningNoon = [
+				'清晨',
+				'上午',
+				'中午',
+				'下午',
+				'傍晚',
+				'夜里',
+				'凌晨',
+				'深夜'
+			];
+			
+			//关键词
+			var keyword = {
+				sd : [
+					'哈厚厚哈哈哈哈哈哈哈哈哈哈哈哈后',
+					'@银教授的段子真搞笑',
+					'粉丝队得分'
+				],
+				
+				nmsl: [
+					'nm$l',
+					'你妈生你的时候是不是把你扔了把胎盘生下来了啊',
+					'你是你妈和你舅舅生的吗'
+				],
+				
+				jq: [
+					'一米阳光沾染半尺忧伤',
+					'想找对象',
+					'人间不值得',
+					'不谈恋爱逼事没有'
+				],
+				
+				cg: [
+					'生了吗',
+					'倒闭了吗',
+					'谁吸毒了',
+					'我家bb老公大宝贝',
+					'来去之间',
+					'王思聪',
+					'中奖'
+				],
+				
+				tg: [
+					'睡了吗',
+					'吃了吗',
+					'和谁在一起',
+					'我养你啊',
+					'他有什么好'
+				],
+				
+				kj: [
+					'小米牛逼',
+					'苹果牛逼',
+					'都是辣鸡'
+				]
+			};
+			
+			function htmlEncode(html){
+				//1.首先动态创建一个容器标签元素，如DIV
+				var temp = document.createElement ("div");
+				//2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+				(temp.textContent != undefined ) ? (temp.textContent = html) : (temp.innerText = html);
+				//3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+				var output = temp.innerHTML;
+				temp = null;
+				return output;
+			}
+			
+			function htmlDecodeByRegExp(str){  
+				var s = "";
+				if(str.length == 0) return "";
+				s = str.replace(/&amp;/g,"&");
+				s = s.replace(/&lt;/g,"<");
+				s = s.replace(/&gt;/g,">");
+				s = s.replace(/&nbsp;/g," ");
+				s = s.replace(/&#39;/g,"\'");
+				s = s.replace(/&quot;/g,"\"");
+				return s;  
+			}
+			
+			function htmlDecode(text){
+				//1.首先动态创建一个容器标签元素，如DIV
+				var temp = document.createElement("div");
+				//2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+				temp.innerHTML = text;
+				//3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+				var output = temp.innerText || temp.textContent;
+				temp = null;
+				return output;
+			}
+			
+			function htmlEncodeByRegExp(str){  
+				var s = "";
+				if(str.length == 0) return "";
+				s = str.replace(/&/g,"&amp;");
+				s = s.replace(/</g,"&lt;");
+				s = s.replace(/>/g,"&gt;");
+				s = s.replace(/ /g,"&nbsp;");
+				s = s.replace(/\'/g,"&#39;");
+				s = s.replace(/\"/g,"&quot;");
+				return s;  
+			}
+		</script>
+	</body>
+
+</html>
